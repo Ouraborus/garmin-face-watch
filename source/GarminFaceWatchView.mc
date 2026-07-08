@@ -14,24 +14,74 @@ class GarminFaceWatchView extends Ui.WatchFace {
     const BATTERY_Y_RATIO = 0.70;
     const HEART_RATE_Y_RATIO = 0.80;
 
+    // Solid backdrop drawn behind every label so it stays legible
+    // regardless of the HR zone background color.
+    const LABEL_PADDING_X = 8;
+    const LABEL_PADDING_Y = 2;
+
+    // HR zone upper bounds in bpm; anything above the last one is the top zone.
+    const HR_ZONE_BLUE_MAX_BPM = 99;
+    const HR_ZONE_GREEN_MAX_BPM = 119;
+    const HR_ZONE_YELLOW_MAX_BPM = 149;
+
     function initialize() {
         WatchFace.initialize();
     }
 
     function onUpdate(dc) {
-        var width = dc.getWidth();
         var height = dc.getHeight();
+        var heartRate = getCurrentHeartRate();
 
-        dc.setColor(Gfx.COLOR_WHITE, Gfx.COLOR_BLACK);
+        dc.setColor(Gfx.COLOR_WHITE, getHeartRateZoneColor(heartRate));
         dc.clear();
 
-        drawTime(dc, width, height);
-        drawDate(dc, width, height);
-        drawBattery(dc, width, height);
-        drawHeartRate(dc, width, height);
+        drawTime(dc, height);
+        drawDate(dc, height);
+        drawBattery(dc, height);
+        drawHeartRate(dc, height, heartRate);
     }
 
-    function drawTime(dc, width, height) {
+    function getCurrentHeartRate() {
+        var heartRate = null;
+        var activityInfo = Activity.getActivityInfo();
+
+        if (activityInfo != null) {
+            heartRate = activityInfo.currentHeartRate;
+        }
+
+        return heartRate;
+    }
+
+    function getHeartRateZoneColor(heartRate) {
+        if (heartRate == null) {
+            return Gfx.COLOR_LT_GRAY;
+        } else if (heartRate <= HR_ZONE_BLUE_MAX_BPM) {
+            return Gfx.COLOR_BLUE;
+        } else if (heartRate <= HR_ZONE_GREEN_MAX_BPM) {
+            return Gfx.COLOR_GREEN;
+        } else if (heartRate <= HR_ZONE_YELLOW_MAX_BPM) {
+            return Gfx.COLOR_YELLOW;
+        }
+
+        return Gfx.COLOR_RED;
+    }
+
+    // Draws text on a solid black box so it reads clearly no matter what
+    // color the HR zone background currently is.
+    function drawLabel(dc, y, font, text, textColor) {
+        var centerX = dc.getWidth() / 2;
+        var dims = dc.getTextDimensions(text, font) as Lang.Array<Lang.Number>;
+        var boxWidth = dims[0] + (LABEL_PADDING_X * 2);
+        var boxHeight = dims[1] + (LABEL_PADDING_Y * 2);
+
+        dc.setColor(Gfx.COLOR_BLACK, Gfx.COLOR_TRANSPARENT);
+        dc.fillRectangle(centerX - (boxWidth / 2), y - LABEL_PADDING_Y, boxWidth, boxHeight);
+
+        dc.setColor(textColor, Gfx.COLOR_TRANSPARENT);
+        dc.drawText(centerX, y, font, text, Gfx.TEXT_JUSTIFY_CENTER);
+    }
+
+    function drawTime(dc, height) {
         var clockTime = Sys.getClockTime();
         var hour = clockTime.hour;
 
@@ -45,38 +95,27 @@ class GarminFaceWatchView extends Ui.WatchFace {
 
         var timeString = Lang.format("$1$:$2$", [hour, clockTime.min.format("%02d")]);
 
-        dc.setColor(Gfx.COLOR_WHITE, Gfx.COLOR_TRANSPARENT);
-        dc.drawText((width / 2).toNumber(), (height * TIME_Y_RATIO).toNumber(), Gfx.FONT_NUMBER_MEDIUM, timeString, Gfx.TEXT_JUSTIFY_CENTER);
+        drawLabel(dc, (height * TIME_Y_RATIO).toNumber(), Gfx.FONT_NUMBER_MEDIUM, timeString, Gfx.COLOR_WHITE);
     }
 
-    function drawDate(dc, width, height) {
+    function drawDate(dc, height) {
         var today = Gregorian.info(Time.now(), Time.FORMAT_MEDIUM);
         var dateString = Lang.format("$1$ $2$ $3$", [today.day_of_week, today.day, today.month]);
 
-        dc.setColor(Gfx.COLOR_LT_GRAY, Gfx.COLOR_TRANSPARENT);
-        dc.drawText((width / 2).toNumber(), (height * DATE_Y_RATIO).toNumber(), Gfx.FONT_SMALL, dateString, Gfx.TEXT_JUSTIFY_CENTER);
+        drawLabel(dc, (height * DATE_Y_RATIO).toNumber(), Gfx.FONT_SMALL, dateString, Gfx.COLOR_LT_GRAY);
     }
 
-    function drawBattery(dc, width, height) {
+    function drawBattery(dc, height) {
         var battery = Sys.getSystemStats().battery;
         var batteryString = "BATT " + battery.format("%d") + "%";
 
-        dc.setColor(Gfx.COLOR_GREEN, Gfx.COLOR_TRANSPARENT);
-        dc.drawText((width / 2).toNumber(), (height * BATTERY_Y_RATIO).toNumber(), Gfx.FONT_TINY, batteryString, Gfx.TEXT_JUSTIFY_CENTER);
+        drawLabel(dc, (height * BATTERY_Y_RATIO).toNumber(), Gfx.FONT_TINY, batteryString, Gfx.COLOR_GREEN);
     }
 
-    function drawHeartRate(dc, width, height) {
-        var heartRate = null;
-        var activityInfo = Activity.getActivityInfo();
-
-        if (activityInfo != null) {
-            heartRate = activityInfo.currentHeartRate;
-        }
-
+    function drawHeartRate(dc, height, heartRate) {
         var hrString = "HR " + ((heartRate != null) ? heartRate.format("%d") : "--");
 
-        dc.setColor(Gfx.COLOR_RED, Gfx.COLOR_TRANSPARENT);
-        dc.drawText((width / 2).toNumber(), (height * HEART_RATE_Y_RATIO).toNumber(), Gfx.FONT_TINY, hrString, Gfx.TEXT_JUSTIFY_CENTER);
+        drawLabel(dc, (height * HEART_RATE_Y_RATIO).toNumber(), Gfx.FONT_TINY, hrString, Gfx.COLOR_RED);
     }
 
 }

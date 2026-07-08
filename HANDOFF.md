@@ -14,8 +14,9 @@ Funcional y verificado corriendo en el simulador. Muestra:
 - Fecha (día de semana, día, mes)
 - Batería
 - Ritmo cardíaco (si el reloj lo reporta; `--` si no hay dato)
+- Fondo completo del watch face que cambia de color según la zona de HR (gris/azul/verde/amarillo/rojo — ver tabla en el README)
 
-Todo se dibuja "a mano" con `Dc.drawText` sobre fondo negro (sin `layout.xml`, sin diseño visual definido todavía — ver [README](README.md) sección "Notas / próximos pasos" y el detalle de estructura de archivos).
+Todo se dibuja "a mano" con `Dc.drawText` sobre una caja negra sólida por cada texto, para que se mantengan legibles sobre cualquiera de los 5 colores de fondo (sin `layout.xml`, sin diseño visual definido más allá de esto — ver [README](README.md) sección "Notas / próximos pasos" y el detalle de estructura de archivos).
 
 ## Estado del entorno de desarrollo
 
@@ -41,7 +42,7 @@ Flujo:
 
 ## Pendientes conocidos
 
-- Diseño visual: tipografía, iconos, colores y disposición quedan sin definir (el layout actual es un placeholder funcional).
+- Diseño visual: tipografía, iconos y disposición quedan sin definir (el layout actual es un placeholder funcional; el color de fondo por zona de HR sí está definido).
 - Refresco de alta frecuencia del ritmo cardíaco (modo "always-on"): requeriría implementar `onPartialUpdate()` + `WatchFaceDelegate`, dejado afuera intencionalmente en el scaffolding inicial.
 - Lista de dispositivos soportados en `manifest.xml` (`iq:product`) cubre ~20 relojes recientes con sensor de HR de muñeca; se puede ampliar según necesidad.
 - Ícono (`launcher_icon.png`) es un placeholder generado programáticamente, sin intención de diseño final.

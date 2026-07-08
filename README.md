@@ -8,7 +8,19 @@ Muestra cuatro datos básicos:
 - Nivel de batería del dispositivo
 - Ritmo cardíaco actual (si el reloj lo reporta)
 
-Todavía no tiene diseño visual definido — es un scaffolding funcional (texto centrado sobre fondo negro) pensado como punto de partida.
+El fondo completo del watch face cambia de color según la zona de ritmo cardíaco actual, para dar una lectura de intensidad de un vistazo:
+
+| Color | Zona | Rango |
+|---|---|---|
+| Gris | Sin lectura | HR no disponible |
+| Azul | Bajo / reposo | hasta 99 bpm |
+| Verde | Normal | 100–119 bpm |
+| Amarillo | Elevado | 120–149 bpm |
+| Rojo | Alto | 150 bpm o más |
+
+Cada texto (hora, fecha, batería, HR) se dibuja sobre una caja negra sólida para mantenerse legible sin importar el color de fondo activo.
+
+Todavía no tiene diseño visual definido más allá de esto — es un scaffolding funcional pensado como punto de partida.
 
 > ¿Retomando este proyecto después de un tiempo, o desde cero? Empezá por [HANDOFF.md](HANDOFF.md) — resume el estado actual, el entorno de desarrollo y la convención de trabajo.
 
@@ -88,7 +100,7 @@ El simulador no tiene un sensor real, así que `Activity.getActivityInfo().curre
 
 ## Notas / próximos pasos
 
-- El watch face dibuja todo "a mano" con `Dc.drawText` (sin `layout.xml`) para mantenerlo simple; el diseño visual (tipografía, iconos, colores, disposición) queda pendiente de definir.
+- El watch face dibuja todo "a mano" con `Dc.drawText` (sin `layout.xml`) para mantenerlo simple; el diseño visual (tipografía, iconos, disposición) queda pendiente de definir más allá del color de fondo por zona de HR.
 - `onUpdate()` se llama ~1 vez por minuto por defecto (comportamiento estándar de Connect IQ para ahorrar batería). Si más adelante se quiere refrescar el ritmo cardíaco con mayor frecuencia (modo "always-on" / alta frecuencia), hay que implementar `onPartialUpdate()` y `WatchFaceDelegate`, algo que se dejó afuera a propósito en este scaffolding inicial.
 - La lista de `iq:product` en `manifest.xml` incluye ~20 relojes recientes con sensor de HR de muñeca; se puede ampliar/editar con `Monkey C: Edit Products` en VS Code o agregando `<iq:product id="..."/>` a mano.
 - El ícono (`launcher_icon.png`) es un placeholder generado programáticamente (círculo azul), sin intención de diseño final.
