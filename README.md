@@ -28,8 +28,29 @@ GarminFaceWatch/
 
 ## Requisitos
 
-1. **Connect IQ SDK Manager** — descargalo desde [developer.garmin.com/connect-iq/sdk](https://developer.garmin.com/connect-iq/sdk/). Desde el SDK Manager instalá al menos un SDK y las imágenes de dispositivo (device images) de los relojes que quieras probar (ej. `fenix7`, `vivoactive4`, `venu3`).
-2. **Editor**: se recomienda VS Code + extensión oficial **Monkey C** (`garmin.monkey-c-tools`), que agrega comandos, autocompletado, debugger y tareas de build/simulación. También se puede compilar 100% por línea de comandos con las herramientas que trae el SDK (`bin/monkeyc`, `bin/monkeydo`, `bin/connectiq`).
+### Estado del setup en esta máquina
+
+Ya instalado (vía Homebrew):
+
+```bash
+brew install --cask connectiq connectiq-sdk-manager
+```
+
+Esto deja disponibles `monkeyc`, `monkeydo`, `monkeydoc` en el PATH (`/opt/homebrew/bin`), y las apps `ConnectIQ.app` (simulador) y `SdkManager.app` en `/Applications`. También se generó ya un `developer_key.der` / `developer_key.pem` en la raíz del proyecto (gitignorado, sirve para firmar builds locales — no hace falta regenerarlo).
+
+**Pendiente — único paso manual que falta, y no se puede scriptear:** descargar las *imágenes de dispositivo* (device images) de los relojes que quieras probar. El compilador no trae ningún device id incluido (ni `fenix7`, ni ningún otro) hasta que no se descargan desde el SDK Manager:
+
+1. Abrí `SdkManager.app` (Spotlight → "SDK Manager", o `open /Applications/SdkManager.app`).
+2. Aceptá el acuerdo de licencia de Garmin (EULA) la primera vez que se abre.
+3. En la pestaña de dispositivos, buscá y descargá los relojes que te interesen (ej. `fenix7`, `vivoactive4`, `venu3`). No requiere cuenta de Garmin Connect para esto, solo aceptar la licencia.
+4. Una vez descargado al menos un dispositivo, `monkeyc -d fenix7 ...` (ver más abajo) va a reconocer el device id.
+
+Este paso queda fuera del alcance de automatización porque el SDK Manager es una app gráfica sin flag de línea de comandos para descargar dispositivos (`sdkmanager --help` solo expone `-u/--update`), y la primera apertura exige aceptar la licencia interactivamente.
+
+### Para instalar desde cero (otra máquina)
+
+1. **Connect IQ SDK Manager** — vía Homebrew (`brew install --cask connectiq connectiq-sdk-manager`) o descargándolo desde [developer.garmin.com/connect-iq/sdk](https://developer.garmin.com/connect-iq/sdk/). Desde el SDK Manager instalá al menos un SDK y las imágenes de dispositivo (device images) de los relojes que quieras probar (ej. `fenix7`, `vivoactive4`, `venu3`) — ver pasos arriba.
+2. **Editor**: se recomienda VS Code + extensión oficial **Monkey C** (`garmin.monkey-c-tools`), que agrega comandos, autocompletado, debugger y tareas de build/simulación. También se puede compilar 100% por línea de comandos con las herramientas que trae el SDK (`monkeyc`, `monkeydo`, `connectiq`).
 3. **Developer key**: Connect IQ requiere firmar los builds con un par de llaves de desarrollador (no es para publicar, es solo para poder compilar/correr localmente).
    - Con la extensión de VS Code: paleta de comandos → `Monkey C: Generate Developer Key Pair`.
    - Por CLI (ejemplo con OpenSSL):
@@ -37,7 +58,7 @@ GarminFaceWatch/
      openssl genrsa -out developer_key.pem 4096
      openssl pkcs8 -topk8 -inform PEM -outform DER -in developer_key.pem -out developer_key.der -nocrypt
      ```
-   - Guardá el `developer_key.der` fuera del repo (o agregalo a `.gitignore`) y configurá su ruta en la extensión (`Settings > Monkey C > Developer Key`) o pasala con `-y` en el CLI.
+   - El `developer_key.der` está gitignorado (ver `.gitignore`) y configurá su ruta en la extensión (`Settings > Monkey C > Developer Key`) o pasala con `-y` en el CLI.
 
 ## Compilar y correr en el simulador
 
@@ -50,14 +71,15 @@ GarminFaceWatch/
 
 ### Opción B — Línea de comandos
 
-Con el SDK en el PATH (o usando las rutas completas dentro de `bin/` del SDK):
+Con el SDK instalado vía Homebrew, `monkeyc` y `monkeydo` ya están en el PATH:
 
 ```bash
-# Compilar para un dispositivo específico
+# Compilar para un dispositivo específico (requiere haber descargado
+# la imagen de ese dispositivo desde SDK Manager, ver arriba)
 monkeyc -d fenix7 -f monkey.jungle -o bin/GarminFaceWatch.prg -y developer_key.der
 
 # Levantar el simulador (una vez, queda corriendo en background)
-connectiq &
+open /Applications/ConnectIQ.app &
 
 # Cargar y correr el build compilado en el simulador
 monkeydo bin/GarminFaceWatch.prg fenix7
