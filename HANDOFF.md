@@ -34,11 +34,18 @@ Si alguien retoma esto en **otra máquina**, seguir la sección "Requisitos → 
 
 Cada feature o bug se trackea como **issue en GitHub** antes de implementarse (templates en `.github/ISSUE_TEMPLATE/`). No se agregan funcionalidades directamente sin un issue que las respalde — así queda un registro de qué se pidió, por qué, y cuándo.
 
-Flujo:
+**Todo cambio pasa por PR, nunca commit directo a `main`.** Flujo completo por issue:
+
 1. Se abre un issue (`feature_request.md` o `bug_report.md`).
-2. Se implementa y compila localmente (`monkeyc -d <device> ...`, ver README).
-3. Se commitea y pushea a `main` (no hay rama de release todavía, es un proyecto chico de una sola persona).
-4. Se cierra el issue.
+2. Se crea una rama para el trabajo.
+3. Se implementa y compila localmente (`monkeyc -d <device> ...`, ver README).
+4. Se abre un PR (`gh pr create`) referenciando el issue.
+5. Se corren las pruebas (ver sección de tests más abajo una vez exista) — no alcanza con "compila".
+6. Se hace una pasada de review sobre el diff del PR (con la skill `code-review`) antes de mergear.
+7. Se corrige lo que la review encuentre.
+8. Recién ahí se mergea el PR (`gh pr merge`) y se cierra el issue.
+
+Este flujo quedó formalizado el 2026-07-07 — antes de eso, algunos commits se hicieron directo a `main` sin PR ni tests.
 
 ## Pendientes conocidos
 
