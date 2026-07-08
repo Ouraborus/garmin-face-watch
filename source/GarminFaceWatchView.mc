@@ -8,6 +8,12 @@ using Toybox.Lang as Lang;
 
 class GarminFaceWatchView extends Ui.WatchFace {
 
+    // Vertical position of each field, as a fraction of screen height.
+    const TIME_Y_RATIO = 0.34;
+    const DATE_Y_RATIO = 0.56;
+    const BATTERY_Y_RATIO = 0.70;
+    const HEART_RATE_Y_RATIO = 0.80;
+
     function initialize() {
         WatchFace.initialize();
     }
@@ -40,7 +46,7 @@ class GarminFaceWatchView extends Ui.WatchFace {
         var timeString = Lang.format("$1$:$2$", [hour, clockTime.min.format("%02d")]);
 
         dc.setColor(Gfx.COLOR_WHITE, Gfx.COLOR_TRANSPARENT);
-        dc.drawText((width / 2).toNumber(), (height * 0.34).toNumber(), Gfx.FONT_NUMBER_MEDIUM, timeString, Gfx.TEXT_JUSTIFY_CENTER);
+        dc.drawText((width / 2).toNumber(), (height * TIME_Y_RATIO).toNumber(), Gfx.FONT_NUMBER_MEDIUM, timeString, Gfx.TEXT_JUSTIFY_CENTER);
     }
 
     function drawDate(dc, width, height) {
@@ -48,7 +54,7 @@ class GarminFaceWatchView extends Ui.WatchFace {
         var dateString = Lang.format("$1$ $2$ $3$", [today.day_of_week, today.day, today.month]);
 
         dc.setColor(Gfx.COLOR_LT_GRAY, Gfx.COLOR_TRANSPARENT);
-        dc.drawText((width / 2).toNumber(), (height * 0.56).toNumber(), Gfx.FONT_SMALL, dateString, Gfx.TEXT_JUSTIFY_CENTER);
+        dc.drawText((width / 2).toNumber(), (height * DATE_Y_RATIO).toNumber(), Gfx.FONT_SMALL, dateString, Gfx.TEXT_JUSTIFY_CENTER);
     }
 
     function drawBattery(dc, width, height) {
@@ -56,7 +62,7 @@ class GarminFaceWatchView extends Ui.WatchFace {
         var batteryString = "BATT " + battery.format("%d") + "%";
 
         dc.setColor(Gfx.COLOR_GREEN, Gfx.COLOR_TRANSPARENT);
-        dc.drawText((width / 2).toNumber(), (height * 0.70).toNumber(), Gfx.FONT_TINY, batteryString, Gfx.TEXT_JUSTIFY_CENTER);
+        dc.drawText((width / 2).toNumber(), (height * BATTERY_Y_RATIO).toNumber(), Gfx.FONT_TINY, batteryString, Gfx.TEXT_JUSTIFY_CENTER);
     }
 
     function drawHeartRate(dc, width, height) {
@@ -70,7 +76,7 @@ class GarminFaceWatchView extends Ui.WatchFace {
         var hrString = "HR " + ((heartRate != null) ? heartRate.format("%d") : "--");
 
         dc.setColor(Gfx.COLOR_RED, Gfx.COLOR_TRANSPARENT);
-        dc.drawText((width / 2).toNumber(), (height * 0.80).toNumber(), Gfx.FONT_TINY, hrString, Gfx.TEXT_JUSTIFY_CENTER);
+        dc.drawText((width / 2).toNumber(), (height * HEART_RATE_Y_RATIO).toNumber(), Gfx.FONT_TINY, hrString, Gfx.TEXT_JUSTIFY_CENTER);
     }
 
 }

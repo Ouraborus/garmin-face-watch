@@ -90,3 +90,11 @@ El simulador no tiene un sensor real, así que `Activity.getActivityInfo().curre
 - `onUpdate()` se llama ~1 vez por minuto por defecto (comportamiento estándar de Connect IQ para ahorrar batería). Si más adelante se quiere refrescar el ritmo cardíaco con mayor frecuencia (modo "always-on" / alta frecuencia), hay que implementar `onPartialUpdate()` y `WatchFaceDelegate`, algo que se dejó afuera a propósito en este scaffolding inicial.
 - La lista de `iq:product` en `manifest.xml` incluye ~20 relojes recientes con sensor de HR de muñeca; se puede ampliar/editar con `Monkey C: Edit Products` en VS Code o agregando `<iq:product id="..."/>` a mano.
 - El ícono (`launcher_icon.png`) es un placeholder generado programáticamente (círculo azul), sin intención de diseño final.
+
+## Contribuir
+
+Cada feature o bug se trackea como issue en GitHub (hay templates en `.github/ISSUE_TEMPLATE/`). Abrí un issue antes de empezar a trabajar en algo nuevo.
+
+## Licencia
+
+[MIT](LICENSE).
