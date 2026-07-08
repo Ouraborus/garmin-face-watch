@@ -1,0 +1,32 @@
+HANDOFF.md
+  s_a952738be17451::t_b292394f7d49ea 44
+  s_a952738be17451::t_b2896de86ba9e4 15,18
+README.md
+  s_a952738be17451::t_4aa1dd8d34021e 113
+  s_a952738be17451::t_c650d53902bf85 123-125
+  s_a952738be17451::t_e68e839911ae86 37-38
+  s_a952738be17451::t_fae57c08419d41 8,21-23
+source/GarminFaceWatchViewTest.mc
+  s_a952738be17451::t_ccc152abb3d5da 37-66
+source/GarminFaceWatchView.mc
+  s_a952738be17451::t_0d837713902d07 14,26-31
+  s_a952738be17451::t_ab35d7a7500624 114-151,153
+  s_a952738be17451::t_e407ca21d961f4 44
+  s_a952738be17451::t_694dde21027fec 32
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "427b3c1b9f3971069e148f92ae2a82413b0ffbcd",
+  "prompts": {},
+  "sessions": {
+    "s_a952738be17451": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "47ba3969-c96f-44fc-a09a-c02a5264bee3",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Ouraborus <1222eca@gmail.com>"
+    }
+  }
+}
