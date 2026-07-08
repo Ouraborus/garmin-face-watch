@@ -38,14 +38,7 @@ brew install --cask connectiq connectiq-sdk-manager
 
 Esto deja disponibles `monkeyc`, `monkeydo`, `monkeydoc` en el PATH (`/opt/homebrew/bin`), y las apps `ConnectIQ.app` (simulador) y `SdkManager.app` en `/Applications`. También se generó ya un `developer_key.der` / `developer_key.pem` en la raíz del proyecto (gitignorado, sirve para firmar builds locales — no hace falta regenerarlo).
 
-**Pendiente — único paso manual que falta, y no se puede scriptear:** descargar las *imágenes de dispositivo* (device images) de los relojes que quieras probar. El compilador no trae ningún device id incluido (ni `fenix7`, ni ningún otro) hasta que no se descargan desde el SDK Manager:
-
-1. Abrí `SdkManager.app` (Spotlight → "SDK Manager", o `open /Applications/SdkManager.app`).
-2. Aceptá el acuerdo de licencia de Garmin (EULA) la primera vez que se abre.
-3. En la pestaña de dispositivos, buscá y descargá los relojes que te interesen (ej. `fenix7`, `vivoactive4`, `venu3`). No requiere cuenta de Garmin Connect para esto, solo aceptar la licencia.
-4. Una vez descargado al menos un dispositivo, `monkeyc -d fenix7 ...` (ver más abajo) va a reconocer el device id.
-
-Este paso queda fuera del alcance de automatización porque el SDK Manager es una app gráfica sin flag de línea de comandos para descargar dispositivos (`sdkmanager --help` solo expone `-u/--update`), y la primera apertura exige aceptar la licencia interactivamente.
+Las *imágenes de dispositivo* (device images) ya se descargaron desde `SdkManager.app` — incluye `fenix7` y ~25 relojes más de las familias fenix/vivoactive. `monkeyc -d fenix7 ...` compila sin errores (`BUILD SUCCESSFUL`) y se verificó corriendo en el simulador. Si en otro momento necesitás un dispositivo que no esté en la lista, abrí `SdkManager.app` y descargalo desde la pestaña de dispositivos (no requiere cuenta de Garmin Connect, solo aceptar la licencia la primera vez).
 
 ### Para instalar desde cero (otra máquina)
 
@@ -74,8 +67,7 @@ Este paso queda fuera del alcance de automatización porque el SDK Manager es un
 Con el SDK instalado vía Homebrew, `monkeyc` y `monkeydo` ya están en el PATH:
 
 ```bash
-# Compilar para un dispositivo específico (requiere haber descargado
-# la imagen de ese dispositivo desde SDK Manager, ver arriba)
+# Compilar para un dispositivo específico
 monkeyc -d fenix7 -f monkey.jungle -o bin/GarminFaceWatch.prg -y developer_key.der
 
 # Levantar el simulador (una vez, queda corriendo en background)
