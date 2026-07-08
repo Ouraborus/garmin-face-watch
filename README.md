@@ -105,9 +105,23 @@ El simulador no tiene un sensor real, así que `Activity.getActivityInfo().curre
 - La lista de `iq:product` en `manifest.xml` incluye ~20 relojes recientes con sensor de HR de muñeca; se puede ampliar/editar con `Monkey C: Edit Products` en VS Code o agregando `<iq:product id="..."/>` a mano.
 - El ícono (`launcher_icon.png`) es un placeholder generado programáticamente (círculo azul), sin intención de diseño final.
 
+## Tests
+
+Pruebas unitarias con el framework nativo de Connect IQ (funciones anotadas `(:test)`, en `source/GarminFaceWatchViewTest.mc`). Cubren la lógica pura del watch face (por ahora, `getHeartRateZoneColor`) — no verifican píxeles renderizados, Connect IQ no tiene mocking de `Dc`.
+
+```bash
+# Compilar en modo test
+monkeyc -t -d fenix7 -f monkey.jungle -o bin/GarminFaceWatchTest.prg -y developer_key.der
+
+# Correr contra el simulador (debe estar abierto)
+monkeydo bin/GarminFaceWatchTest.prg fenix7 -t
+```
+
+**Ojo:** `monkeydo` siempre termina con exit code 1, incluso cuando todos los tests pasan — el resultado real hay que leerlo del texto de salida (`PASSED (passed=N, failed=0, errors=0)` vs `FAILED (...)`), no confiar en el exit code.
+
 ## Contribuir
 
-Cada feature o bug se trackea como issue en GitHub (hay templates en `.github/ISSUE_TEMPLATE/`). Abrí un issue antes de empezar a trabajar en algo nuevo.
+Cada feature o bug se trackea como issue en GitHub (hay templates en `.github/ISSUE_TEMPLATE/`). Abrí un issue antes de empezar a trabajar en algo nuevo. Todo cambio pasa por PR (branch → PR → tests → review → merge) — ver [HANDOFF.md](HANDOFF.md) para el flujo completo.
 
 ## Licencia
 

@@ -40,7 +40,7 @@ Cada feature o bug se trackea como **issue en GitHub** antes de implementarse (t
 2. Se crea una rama para el trabajo.
 3. Se implementa y compila localmente (`monkeyc -d <device> ...`, ver README).
 4. Se abre un PR (`gh pr create`) referenciando el issue.
-5. Se corren las pruebas (ver sección de tests más abajo una vez exista) — no alcanza con "compila".
+5. Se corren las pruebas (`monkeyc -t ...` + `monkeydo ... -t`, ver sección "Tests" del README) — no alcanza con "compila". Ojo: `monkeydo` siempre sale con exit code 1, hay que leer el texto de salida (`PASSED`/`FAILED`).
 6. Se hace una pasada de review sobre el diff del PR (con la skill `code-review`) antes de mergear.
 7. Se corrige lo que la review encuentre.
 8. Recién ahí se mergea el PR (`gh pr merge`) y se cierra el issue.
