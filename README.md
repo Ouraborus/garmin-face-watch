@@ -5,7 +5,7 @@ Watch face para dispositivos Garmin compatibles con Connect IQ, escrito en Monke
 Muestra cuatro datos básicos:
 - Hora (formato 12h/24h según la configuración del reloj)
 - Fecha (día de semana, día, mes)
-- Nivel de batería del dispositivo
+- Nivel de batería del dispositivo, como un aro de progreso en el borde externo del reloj
 - Ritmo cardíaco actual (si el reloj lo reporta)
 
 El fondo completo del watch face cambia de color según la zona de ritmo cardíaco actual, para dar una lectura de intensidad de un vistazo:
@@ -18,7 +18,9 @@ El fondo completo del watch face cambia de color según la zona de ritmo cardía
 | Amarillo | Elevado | 120–149 bpm |
 | Rojo | Alto | 150 bpm o más |
 
-Cada texto (hora, fecha, batería, HR) se dibuja sobre una caja negra sólida para mantenerse legible sin importar el color de fondo activo.
+La batería se muestra como un aro en el borde externo del reloj, no como texto: al 100% es un círculo completo, y se va reduciendo (en sentido horario desde las 12) a medida que se descarga, hasta desaparecer en 0%. Tiene un track negro de fondo (círculo completo, grosor fijo) detrás del arco blanco de progreso, para que se distinga siempre del color de fondo dinámico de HR.
+
+Cada texto (hora, fecha, HR) se dibuja sobre una caja negra sólida para mantenerse legible sin importar el color de fondo activo.
 
 Todavía no tiene diseño visual definido más allá de esto — es un scaffolding funcional pensado como punto de partida.
 
@@ -32,7 +34,8 @@ GarminFaceWatch/
 ├── monkey.jungle                      # config de build
 ├── source/
 │   ├── GarminFaceWatchApp.mc          # entry point de la app (Application.AppBase)
-│   └── GarminFaceWatchView.mc         # watch face (WatchUi.WatchFace) con el dibujo de los 4 datos
+│   ├── GarminFaceWatchView.mc         # watch face (WatchUi.WatchFace): hora, fecha, HR, aro de batería
+│   └── GarminFaceWatchViewTest.mc     # tests unitarios (funciones `(:test)`)
 └── resources/
     ├── strings/strings.xml            # nombre de la app
     └── drawables/
@@ -107,7 +110,7 @@ El simulador no tiene un sensor real, así que `Activity.getActivityInfo().curre
 
 ## Tests
 
-Pruebas unitarias con el framework nativo de Connect IQ (funciones anotadas `(:test)`, en `source/GarminFaceWatchViewTest.mc`). Cubren la lógica pura del watch face (por ahora, `getHeartRateZoneColor`) — no verifican píxeles renderizados, Connect IQ no tiene mocking de `Dc`.
+Pruebas unitarias con el framework nativo de Connect IQ (funciones anotadas `(:test)`, en `source/GarminFaceWatchViewTest.mc`). Cubren la lógica pura del watch face (`getHeartRateZoneColor`, `getBatterySweepDegrees`) — no verifican píxeles renderizados, Connect IQ no tiene mocking de `Dc`.
 
 ```bash
 # Compilar en modo test
@@ -117,7 +120,9 @@ monkeyc -t -d fenix7 -f monkey.jungle -o bin/GarminFaceWatchTest.prg -y develope
 monkeydo bin/GarminFaceWatchTest.prg fenix7 -t
 ```
 
-**Ojo:** `monkeydo` siempre termina con exit code 1, incluso cuando todos los tests pasan — el resultado real hay que leerlo del texto de salida (`PASSED (passed=N, failed=0, errors=0)` vs `FAILED (...)`), no confiar en el exit code.
+**Ojo 1:** `monkeydo` siempre termina con exit code 1, incluso cuando todos los tests pasan — el resultado real hay que leerlo del texto de salida (`PASSED (passed=N, failed=0, errors=0)` vs `FAILED (...)`), no confiar en el exit code.
+
+**Ojo 2:** correr `monkeydo` dos veces seguidas contra el mismo simulador (sin reiniciarlo) a veces se cuelga indefinidamente sin imprimir nada. Si un `monkeydo` no muestra output en unos segundos, cerrá y reabrí `ConnectIQ.app` antes de reintentar.
 
 ## Contribuir
 

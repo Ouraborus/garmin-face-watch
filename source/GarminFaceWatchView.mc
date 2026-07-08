@@ -11,8 +11,7 @@ class GarminFaceWatchView extends Ui.WatchFace {
     // Vertical position of each field, as a fraction of screen height.
     const TIME_Y_RATIO = 0.34;
     const DATE_Y_RATIO = 0.56;
-    const BATTERY_Y_RATIO = 0.70;
-    const HEART_RATE_Y_RATIO = 0.80;
+    const HEART_RATE_Y_RATIO = 0.70;
 
     // Solid backdrop drawn behind every label so it stays legible
     // regardless of the HR zone background color.
@@ -23,6 +22,13 @@ class GarminFaceWatchView extends Ui.WatchFace {
     const HR_ZONE_BLUE_MAX_BPM = 99;
     const HR_ZONE_GREEN_MAX_BPM = 119;
     const HR_ZONE_YELLOW_MAX_BPM = 149;
+
+    // Battery ring: drawn at the outer edge, black track behind a white
+    // progress arc so it reads clearly against any HR zone background.
+    const BATTERY_RING_MARGIN = 4;
+    const BATTERY_RING_TRACK_WIDTH = 8;
+    const BATTERY_RING_FILL_WIDTH = 5;
+    const BATTERY_RING_START_DEGREE = 90; // 12 o'clock
 
     function initialize() {
         WatchFace.initialize();
@@ -35,9 +41,9 @@ class GarminFaceWatchView extends Ui.WatchFace {
         dc.setColor(Gfx.COLOR_WHITE, getHeartRateZoneColor(heartRate));
         dc.clear();
 
+        drawBatteryRing(dc);
         drawTime(dc, height);
         drawDate(dc, height);
-        drawBattery(dc, height);
         drawHeartRate(dc, height, heartRate);
     }
 
@@ -105,11 +111,46 @@ class GarminFaceWatchView extends Ui.WatchFace {
         drawLabel(dc, (height * DATE_Y_RATIO).toNumber(), Gfx.FONT_SMALL, dateString, Gfx.COLOR_LT_GRAY);
     }
 
-    function drawBattery(dc, height) {
-        var battery = Sys.getSystemStats().battery;
-        var batteryString = "BATT " + battery.format("%d") + "%";
+    // Clamps to [0, 100] and converts to a sweep in degrees for the battery
+    // ring's progress arc. Pure/no Dc dependency so it's unit-testable.
+    function getBatterySweepDegrees(batteryPercent) {
+        var clamped = batteryPercent;
 
-        drawLabel(dc, (height * BATTERY_Y_RATIO).toNumber(), Gfx.FONT_TINY, batteryString, Gfx.COLOR_GREEN);
+        if (clamped < 0) {
+            clamped = 0;
+        } else if (clamped > 100) {
+            clamped = 100;
+        }
+
+        return (clamped / 100.0) * 360.0;
+    }
+
+    // Draws the battery level as a ring around the outer edge: a black
+    // track (always a full circle, doubles as a legibility border against
+    // any HR zone background) with a white progress arc on top that
+    // shrinks toward nothing as the battery drains.
+    function drawBatteryRing(dc) {
+        var centerX = dc.getWidth() / 2;
+        var centerY = dc.getHeight() / 2;
+        var maxRadius = (dc.getWidth() < dc.getHeight() ? dc.getWidth() : dc.getHeight()) / 2;
+        var radius = maxRadius - BATTERY_RING_MARGIN;
+        var sweepDegrees = getBatterySweepDegrees(Sys.getSystemStats().battery);
+
+        dc.setColor(Gfx.COLOR_BLACK, Gfx.COLOR_TRANSPARENT);
+        dc.setPenWidth(BATTERY_RING_TRACK_WIDTH);
+        dc.drawCircle(centerX, centerY, radius);
+
+        dc.setColor(Gfx.COLOR_WHITE, Gfx.COLOR_TRANSPARENT);
+        dc.setPenWidth(BATTERY_RING_FILL_WIDTH);
+
+        if (sweepDegrees >= 360.0) {
+            dc.drawCircle(centerX, centerY, radius);
+        } else if (sweepDegrees > 0.0) {
+            var endDegree = BATTERY_RING_START_DEGREE - sweepDegrees;
+            dc.drawArc(centerX, centerY, radius, Gfx.ARC_CLOCKWISE, BATTERY_RING_START_DEGREE, endDegree);
+        }
+
+        dc.setPenWidth(1);
     }
 
     function drawHeartRate(dc, height, heartRate) {
