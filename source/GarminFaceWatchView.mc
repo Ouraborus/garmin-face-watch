@@ -149,8 +149,6 @@ class GarminFaceWatchView extends Ui.WatchFace {
             var endDegree = BATTERY_RING_START_DEGREE - sweepDegrees;
             dc.drawArc(centerX, centerY, radius, Gfx.ARC_CLOCKWISE, BATTERY_RING_START_DEGREE, endDegree);
         }
-
-        dc.setPenWidth(1);
     }
 
     function drawHeartRate(dc, height, heartRate) {
