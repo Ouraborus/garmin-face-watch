@@ -10,6 +10,8 @@ Muestra cuatro datos básicos:
 
 Todavía no tiene diseño visual definido — es un scaffolding funcional (texto centrado sobre fondo negro) pensado como punto de partida.
 
+> ¿Retomando este proyecto después de un tiempo, o desde cero? Empezá por [HANDOFF.md](HANDOFF.md) — resume el estado actual, el entorno de desarrollo y la convención de trabajo.
+
 ## Estructura del proyecto
 
 ```

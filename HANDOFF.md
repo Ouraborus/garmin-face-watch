@@ -1,0 +1,53 @@
+# Handoff
+
+Este documento existe para que cualquier persona (o sesión de trabajo) que retome este proyecto pueda orientarse rápido, sin tener que reconstruir el contexto desde el historial de git o una conversación anterior. Léelo antes de tocar el código.
+
+## Qué es esto
+
+Watch face para Garmin (Connect IQ / Monkey C). Repo: [Ouraborus/garmin-face-watch](https://github.com/Ouraborus/garmin-face-watch) (público).
+
+## Estado actual
+
+Funcional y verificado corriendo en el simulador. Muestra:
+
+- Hora (respeta formato 12h/24h del dispositivo)
+- Fecha (día de semana, día, mes)
+- Batería
+- Ritmo cardíaco (si el reloj lo reporta; `--` si no hay dato)
+
+Todo se dibuja "a mano" con `Dc.drawText` sobre fondo negro (sin `layout.xml`, sin diseño visual definido todavía — ver [README](README.md) sección "Notas / próximos pasos" y el detalle de estructura de archivos).
+
+## Estado del entorno de desarrollo
+
+En esta máquina (macOS, Apple Silicon) ya está todo instalado y probado — no hace falta repetir el setup:
+
+- Homebrew + casks `connectiq` y `connectiq-sdk-manager` instalados.
+- `monkeyc` / `monkeydo` en el PATH (`/opt/homebrew/bin`).
+- `developer_key.der` / `.pem` generados en la raíz del proyecto (gitignorados).
+- Device images descargadas vía `SdkManager.app`: `fenix7` y ~25 relojes más de las familias fenix/vivoactive.
+- Compilación verificada (`monkeyc -d fenix7 ...` → `BUILD SUCCESSFUL`) y corrida en el simulador (`ConnectIQ.app`) con resultado visual confirmado por el usuario.
+
+Si alguien retoma esto en **otra máquina**, seguir la sección "Requisitos → Para instalar desde cero" del README.
+
+## Convención de trabajo
+
+Cada feature o bug se trackea como **issue en GitHub** antes de implementarse (templates en `.github/ISSUE_TEMPLATE/`). No se agregan funcionalidades directamente sin un issue que las respalde — así queda un registro de qué se pidió, por qué, y cuándo.
+
+Flujo:
+1. Se abre un issue (`feature_request.md` o `bug_report.md`).
+2. Se implementa y compila localmente (`monkeyc -d <device> ...`, ver README).
+3. Se commitea y pushea a `main` (no hay rama de release todavía, es un proyecto chico de una sola persona).
+4. Se cierra el issue.
+
+## Pendientes conocidos
+
+- Diseño visual: tipografía, iconos, colores y disposición quedan sin definir (el layout actual es un placeholder funcional).
+- Refresco de alta frecuencia del ritmo cardíaco (modo "always-on"): requeriría implementar `onPartialUpdate()` + `WatchFaceDelegate`, dejado afuera intencionalmente en el scaffolding inicial.
+- Lista de dispositivos soportados en `manifest.xml` (`iq:product`) cubre ~20 relojes recientes con sensor de HR de muñeca; se puede ampliar según necesidad.
+- Ícono (`launcher_icon.png`) es un placeholder generado programáticamente, sin intención de diseño final.
+
+## Dónde mirar primero
+
+- [README.md](README.md): estructura del proyecto, cómo compilar/correr, cómo simular datos de ritmo cardíaco.
+- `source/GarminFaceWatchView.mc`: toda la lógica de dibujo del watch face.
+- `manifest.xml`: dispositivos soportados y metadata de la app.
