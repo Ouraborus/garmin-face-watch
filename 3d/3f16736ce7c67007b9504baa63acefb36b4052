@@ -1,0 +1,27 @@
+source/GarminFaceWatchView.mc
+  s_a952738be17451::t_0dd47fb3725e35 17-26,33,35,38-44,46-48,50-51,53-66,69-72,74-84,98,101,105,108,112,115,118
+  s_a952738be17451::t_d2bed5cc43d81b 45,49,52
+  s_a952738be17451::t_1a622d7a798434 73
+HANDOFF.md
+  s_a952738be17451::t_5674135c07a2c7 17,19
+  s_a952738be17451::t_15c6ea50414d1f 45
+README.md
+  s_a952738be17451::t_0cb326766828fe 11-23
+  s_a952738be17451::t_ee8bb82f01bbca 103
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "3d3f16736ce7c67007b9504baa63acefb36b4052",
+  "prompts": {},
+  "sessions": {
+    "s_a952738be17451": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "47ba3969-c96f-44fc-a09a-c02a5264bee3",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Ouraborus <1222eca@gmail.com>"
+    }
+  }
+}
