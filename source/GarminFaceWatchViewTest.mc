@@ -34,3 +34,33 @@ function testHeartRateZoneRed(logger) {
     return view.getHeartRateZoneColor(150) == Gfx.COLOR_RED
         && view.getHeartRateZoneColor(220) == Gfx.COLOR_RED;
 }
+
+(:test)
+function testBatterySweepEmpty(logger) {
+    var view = new GarminFaceWatchView();
+    return view.getBatterySweepDegrees(0) == 0.0;
+}
+
+(:test)
+function testBatterySweepHalf(logger) {
+    var view = new GarminFaceWatchView();
+    return view.getBatterySweepDegrees(50) == 180.0;
+}
+
+(:test)
+function testBatterySweepFull(logger) {
+    var view = new GarminFaceWatchView();
+    return view.getBatterySweepDegrees(100) == 360.0;
+}
+
+(:test)
+function testBatterySweepClampsAboveHundred(logger) {
+    var view = new GarminFaceWatchView();
+    return view.getBatterySweepDegrees(150) == 360.0;
+}
+
+(:test)
+function testBatterySweepClampsBelowZero(logger) {
+    var view = new GarminFaceWatchView();
+    return view.getBatterySweepDegrees(-10) == 0.0;
+}

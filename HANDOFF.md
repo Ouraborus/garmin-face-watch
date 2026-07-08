@@ -12,9 +12,10 @@ Funcional y verificado corriendo en el simulador. Muestra:
 
 - Hora (respeta formato 12h/24h del dispositivo)
 - Fecha (día de semana, día, mes)
-- Batería
+- Batería, como aro de progreso en el borde externo (círculo completo al 100%, se reduce hasta desaparecer en 0%; track negro fijo + arco blanco, no depende del color de HR)
 - Ritmo cardíaco (si el reloj lo reporta; `--` si no hay dato)
 - Fondo completo del watch face que cambia de color según la zona de HR (gris/azul/verde/amarillo/rojo — ver tabla en el README)
+- Suite de tests unitarios (`source/GarminFaceWatchViewTest.mc`) cubriendo la lógica pura (`getHeartRateZoneColor`, `getBatterySweepDegrees`)
 
 Todo se dibuja "a mano" con `Dc.drawText` sobre una caja negra sólida por cada texto, para que se mantengan legibles sobre cualquiera de los 5 colores de fondo (sin `layout.xml`, sin diseño visual definido más allá de esto — ver [README](README.md) sección "Notas / próximos pasos" y el detalle de estructura de archivos).
 
@@ -40,7 +41,7 @@ Cada feature o bug se trackea como **issue en GitHub** antes de implementarse (t
 2. Se crea una rama para el trabajo.
 3. Se implementa y compila localmente (`monkeyc -d <device> ...`, ver README).
 4. Se abre un PR (`gh pr create`) referenciando el issue.
-5. Se corren las pruebas (`monkeyc -t ...` + `monkeydo ... -t`, ver sección "Tests" del README) — no alcanza con "compila". Ojo: `monkeydo` siempre sale con exit code 1, hay que leer el texto de salida (`PASSED`/`FAILED`).
+5. Se corren las pruebas (`monkeyc -t ...` + `monkeydo ... -t`, ver sección "Tests" del README) — no alcanza con "compila". Ojo: `monkeydo` siempre sale con exit code 1 (leer el texto de salida), y correrlo dos veces seguidas sin reiniciar `ConnectIQ.app` a veces se cuelga.
 6. Se hace una pasada de review sobre el diff del PR (con la skill `code-review`) antes de mergear.
 7. Se corrige lo que la review encuentre.
 8. Recién ahí se mergea el PR (`gh pr merge`) y se cierra el issue.
